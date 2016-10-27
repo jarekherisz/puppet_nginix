@@ -1,0 +1,5 @@
+<% if @authentication.empty? == false -%>
+<% @authentication.each do |key, element| -%>
+<%= key %>:<%= element %>
+<% end -%>
+<% end -%>
