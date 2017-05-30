@@ -10,6 +10,10 @@ server {
 
     root            <%= @document_root %>;
 
+<%- if @http_to_https == true %>
+    return 301 https://$host$request_uri;
+<% else %>
+
     <%- if @extra_config.empty? == false -%>
     <%- @extra_config.each do |element| %>
     <%= element %>
@@ -76,5 +80,7 @@ server {
         <%- end %><%- end -%>
     }
     <%- end -%>
+
+<%- end -%>
 
 }

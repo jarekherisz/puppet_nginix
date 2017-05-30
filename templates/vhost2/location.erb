@@ -1,0 +1,34 @@
+    ####Puppet name: <%= @name %>
+    ####order no. <%= @order %>
+<% if @description -%>
+    <%- if @description.is_a?(Array) -%>
+        <%- @description.each do |value| -%>
+    ##<%= value %>;
+        <%- end -%>
+    <%- else -%>
+    ##<%= @description %>
+    <%- end -%>
+<% end -%>
+    location <%= @location %> {
+<% if @deny -%>
+    deny   <%= @deny %>;
+<% end -%>
+<%- if @authentication == true -%>
+        auth_basic "Centerkom Auth";
+        auth_basic_user_file  <%= @authentication_file %>;
+<%- end -%>
+<% if @params.empty? == false -%>
+    <%- @params.each do |name, param| -%>
+        <%- if param.is_a?(Array) -%>
+        <%= name %> {
+            <%- param.each do |value| -%>
+            <%= value %>;
+            <%- end -%>
+        }
+        <%- else -%>
+        <%= name %> <%= param %>;
+        <%- end -%>
+    <%- end -%>
+<% end -%>
+    }
+
