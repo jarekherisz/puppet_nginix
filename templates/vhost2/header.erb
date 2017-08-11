@@ -23,3 +23,7 @@ server {
     real_ip_header <%= @real_ip_header %>;
     <%- end -%>
 
+    <%- if @php_pool != false -%>
+    set $custom_php_pool <%= @php_pool %>;
+    <%- end -%>
+

@@ -79,28 +79,19 @@ define nginx::vhost2 (
                                         'log_not_found' => 'off'
                                       }
                                     },
-                                    '@phpfpm' => {
-                                      'location' => '@phpfpm',
-                                      'vhost' => "${name}",
-                                      'order' => "800",
-                                      'params' => {
-                                        'try_files'      => '$uri =404',
-                                        "add_header X-Server" => '$hostname',
-                                        'fastcgi_pass'=> $php_pool,
-                                        'if ($custom_php_pool)' => ['fastcgi_pass $custom_php_pool'],
-                                        'fastcgi_index'=>$document_index,
-                                        'fastcgi_param SCRIPT_FILENAME'=> '$document_root$fastcgi_script_name',
-                                        'fastcgi_param SCRIPT_NAME'=> '$fastcgi_script_name',
-                                        'include'=> 'fastcgi_params',
-                                        'fastcgi_read_timeout'=> $fastcgi_read_timeout
-                                      }
-                                    },
                                     'main_php' => {
                                       'location' => '~ \.php$',
                                       'vhost' => "${name}",
                                       'order' => "800",
                                       'params' => {
-                                        'echo_exec' => '@phpfpm'
+                                        'try_files'      => '$uri =404',
+                                        "add_header X-Server" => '$hostname',
+                                        'fastcgi_pass'=> '$custom_php_pool',
+                                        'fastcgi_index'=>$document_index,
+                                        'fastcgi_param SCRIPT_FILENAME'=> '$document_root$fastcgi_script_name',
+                                        'fastcgi_param SCRIPT_NAME'=> '$fastcgi_script_name',
+                                        'include'=> 'fastcgi_params',
+                                        'fastcgi_read_timeout'=> $fastcgi_read_timeout
                                       }
                                     }
                                   }
