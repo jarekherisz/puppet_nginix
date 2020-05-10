@@ -1,6 +1,9 @@
-class nginx::install inherits nginx {
+class nginx::install (
+  $worker_connections,
+  $keepalive_timeout
+) inherits nginx {
 
-  #notify { $nginx::ensure: }
+  #notify { $worker_connections: }
   package { $nginx::params::package_names:
     ensure => $nginx::ensure,
     #notify  => Service["${nginx::params::service_name}"], startuje dopiero z vhostem

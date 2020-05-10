@@ -1,5 +1,6 @@
 ########################################################################################
 ## This file is centrally managed by puppet, any manual changes will be OVERWRITTEN   ##
+## vhost									      ##
 ########################################################################################
 server {
     listen          <%= @ip_addr %>:<%= @tcp_port %>;
@@ -9,6 +10,8 @@ server {
     error_log       <%= @log_dir %>/<%= @name %>_error.log;
 
     root            <%= @document_root %>;
+
+    <%= scope.call_function('epp', [@module_name+"/filters.epp"]) %>
 
 <%- if @http_to_https == true %>
     return 301 https://$host$request_uri;
@@ -46,6 +49,10 @@ server {
         allow all;
         log_not_found off;
         access_log off;
+    }
+
+    location ^~ /media/wysiwyg/.thumbs/ {
+        allow all;
     }
 
     location ~ /\. {

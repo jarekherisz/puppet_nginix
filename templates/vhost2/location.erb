@@ -11,7 +11,17 @@
 <% end -%>
     location <%= @location %> {
 <% if @deny -%>
-    deny   <%= @deny %>;
+    <%- if @deny.is_a?(Hash) -%>
+        <%- @deny.each do |name, value| -%>
+        <%= name %> <%= value %>;
+        <%- end -%>
+    <%- elsif @deny.is_a?(Array) -%>
+        <%- @deny.each do |value| -%>
+        <%= value %>;
+        <%- end -%>
+    <%- else -%>
+        deny   <%= @deny %>;
+    <% end -%>
 <% end -%>
 <%- if @authentication == true -%>
         auth_basic "Centerkom Auth";
@@ -25,10 +35,22 @@
             <%= value %>;
             <%- end -%>
         }
+        <%- elsif param.is_a?(Hash) -%>
+            <%- if param['location'] -%>
+<%= scope.call_function('epp', [@module_name+"/vhost2/sublocation.epp", {'name'=>name, 'data' => param, 'authentication_file' =>@authentication_file }]) %>
+            <%- else -%>
+        <%= name %> {
+                <%- param.each do |sub_name, value| -%>
+            <%= sub_name %> <%= value %>;
+                <%- end -%>
+        }
+            <%- end -%>
         <%- else -%>
         <%= name %> <%= param %>;
         <%- end -%>
     <%- end -%>
 <% end -%>
     }
+
+
 

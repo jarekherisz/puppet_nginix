@@ -1,14 +1,33 @@
 ########################################################################################
 ## This file is centrally managed by puppet, any manual changes will be OVERWRITTEN   ##
+## vhost2                                                                             ##
 ########################################################################################
+<%- if @upstream != "false" and @upstream_params.empty? == false  -%>
+upstream <%= @upstream %> {
+    <%- @upstream_params.each do |param_value| -%>
+        <%= param_value %>;
+    <%- end -%>
+    }
+<%- end -%>
+
 server {
     listen          <%= @ip_addr %>:<%= @tcp_port %>;
     server_name     <%= @vhost %> <%= @vhost_aliases%>;
 
-    access_log      <%= @log_dir %>/<%= @name %>_access.log;
-    error_log       <%= @log_dir %>/<%= @name %>_error.log;
+<% if @set_variables -%>
+    <%- if @set_variables.is_a?(Hash) -%>
+        <%- @set_variables.each do |name, value| -%>
+    set $<%= name %> <%= value %>;
+        <%- end -%>
+    <%- end -%>
+<%- end -%>
 
+    access_log      <%= @log_dir %>/<%= @name %>_access.log;
+    error_log       <%= @log_dir %>/<%= @name %>_error.log<%- if @debug == true -%> debug<%- end -%>;
+
+    <%- if @document_root != "false" -%>
     root            <%= @document_root %>;
+    <%- end -%>
 
     <%- if @https == true -%>
     ssl             on;
@@ -16,14 +35,23 @@ server {
     ssl_certificate_key  <%= @ssl_certificate_key %>;
     <%- end -%>
 
+    <%- if @filters == true -%>
+<%= scope.call_function('epp', [@module_name+"/filters.epp"]) %>
+    <%- end -%>
+<%= @filters_string %>
+
     <%- if @php_proxy == true -%>
     client_max_body_size <%= @client_max_body_size %>;
     port_in_redirect <%= @port_in_redirect %>;
+    <%- if @set_real_ip_from.is_a?(Array) -%>
+        <%- @set_real_ip_from.each do |value| -%>
+    set_real_ip_from <%= value %>;
+        <%- end -%>
+    <%- else -%>
     set_real_ip_from <%= @set_real_ip_from %>;
+    <%- end -%>
     real_ip_header <%= @real_ip_header %>;
     <%- end -%>
-
-    <%- if @php_pool != false -%>
-    set $custom_php_pool <%= @php_pool %>;
+    <%- @header_params.each do |param_name, param_value| -%>
+    <%= param_name %> <%= param_value %>;
     <%- end -%>
-

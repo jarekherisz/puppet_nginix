@@ -1,9 +1,11 @@
 define nginx::vhost2::location (
   $location = $name,
   $vhost,
+  $satisfy = undef,
+  $allow = undef,
   $deny       = undef,
   $params = {},
-  $order = "100",
+  $order = 100,
   $authentication = false,
   $description  = undef,
   $authentication_file = Nginx::Vhost2[$vhost]["authentication_file"]

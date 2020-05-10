@@ -1,0 +1,37 @@
+            ####Puppet sub location name: <%= $name %>;
+            <%- if $data['description'] { -%>
+                <%- if $data['description'].is_array() { -%>
+                    ##TO DO
+                <%- } -%>
+                <%- else { -%>
+            ##<%= $data['description'] %>
+                <%- } -%>
+            <%- } -%>
+            location <%= $data['location'] %> {
+                <%- if $data['deny'] {-%>
+                    deny  <%= $data['deny']%>;
+                <%- } -%>
+                <%- if $data['authentication'] == true { -%>
+                        auth_basic "Centerkom Auth";
+                        auth_basic_user_file  <%= $authentication_file %>;
+                <%- } -%>
+                <%- if $data['params'].empty == false { -%>
+                    <%- $data['params'].each |$name, $param| { -%>
+                        <%- if $param.is_hash() { -%>
+                            <%- if $param['location'] { -%>
+                            ##TO DO
+                            <%- } -%>
+                            <%- else { -%>
+                        <%= $name %> {
+                                <%- $param.each |$sub_name, $sub_param| { -%>
+                            <%= $sub_name %> <%= $sub_param %>;
+                                <%- } -%>
+                        }
+                            <%- } -%>
+                        <%- } -%>
+                        <%- else { -%>
+                        <%= $name %> <%= $param %>;
+                        <%- } -%>
+                    <%- } -%>
+                <%- } -%>
+            }

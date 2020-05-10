@@ -4,6 +4,8 @@ class nginx::params {
   $vhost_aliases    = ''
   $tcp_port         = '80'
   $ip_addr          = '*'
+  $worker_connections = 768
+  $keepalive_timeout = 65
   $document_root    = '/srv/www'
   $document_index   = 'index.php'
   $fastcgi_param    = []

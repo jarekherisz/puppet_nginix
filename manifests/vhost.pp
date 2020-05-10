@@ -78,12 +78,13 @@ define nginx::vhost (
     }
 
 
-    file { "${document_root}/.authentication":
-      ensure => present,
-      content => template ("${module_name}/authentication.erb"),
-      require => File["${document_root}"]
+    if !defined(File["${document_root}/.authentication"]) {
+      file { "${document_root}/.authentication":
+        ensure  => present,
+        content => template("${module_name}/authentication.erb"),
+        require => File["${document_root}"]
+      }
     }
-
   }
 
 }
